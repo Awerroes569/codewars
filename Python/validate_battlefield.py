@@ -7,6 +7,7 @@ def validate_battlefield(battleField):
         return False
     firstOrder=copy.deepcopy(ORDER)
     firstField=copy.deepcopy(battleField)
+    firstField.T
     fireplace=[(firstField,firstOrder)]
     while(len(fireplace)):
         currField,currOrder=fireplace.pop()
