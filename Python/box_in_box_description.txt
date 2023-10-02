@@ -1,0 +1,7 @@
+"Given a positive integer n, return a string representing the box associated with it."
+Boxes can get huge fast, so range of n is 1 - 20 (upper limit included/excluded depending on language).
+Rows are delimited by a newline '\n' and all rows have same length.
+Make sure to include the corrrect amount of leading and trailing whitespace where necessary.
+Characters used in box: '|', '_', ' '.
+Keep an eye out on performance of your solution.
+Code length limited to 2000 characters to prevent hardcoding.
