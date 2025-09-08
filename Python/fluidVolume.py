@@ -1,90 +1,34 @@
-"""
-heightmap:
-  8 8 8 8 6 6 6 6
-  8 0 0 8 6 0 0 6
-  8 0 0 8 6 0 0 6
-  8 8 8 8 6 6 6 0
-"""
-raw = [[8, 8, 8, 8, 6, 6, 6, 6],
-         [8, 0, 0, 8, 6, 0, 0, 6],
-         [8, 0, 0, 8, 6, 0, 0, 6],
-         [8, 8, 8, 8, 6, 6, 6, 0]]
+import heapq
 
-DIRECTIONS=[(0, 1), (0, -1), (1, 0), (-1, 0)]
+DIRECTIONS = [(0, 1), (0, -1), (1, 0), (-1, 0)]
 
-def convertToDict(heightmap):
-    result = {}
-    for row in range(len(heightmap)):
-        for column in range(len(heightmap[row])):
-            result[(row, column)] = heightmap[row][column]
-    return result
-
-def findMins(heightmap):
-    minimum = min(heightmap.values())
-    return minimum
-
-def collectMins2(heightmap, minimum):
-    result = []
-    for row in range(len(heightmap)):
-        for column in range(len(heightmap[row])):
-            if heightmap[row][column] == minimum:
-                result.append((row, column))
-    return result
-
-def collectMins(heightmap, minimum):
-    result = []
-    for key in heightmap:
-        if heightmap[key] == minimum:
-            result.append(key)
-    return result
-
-def findGroup2(minimums, start):
-    group=[]
-    minimums.remove(start)
-    furnace=[start]
-    while furnace:
-        current=furnace.pop(0)
-        group.append(current)
-        for direction in DIRECTIONS:
-            try:
-                new=(current[0]+direction[0], current[1]+direction[1])
-            except:
-                continue
-            if new in minimums:
-                minimums.remove(new)
-                furnace.append(new)
-    return group
-
-def findGroup(minimums, start):
-    group=[]
-    minimums.remove(start)
-    furnace=[start]
-    while furnace:
-        current=furnace.pop(0)
-        group.append(current)
-        for direction in DIRECTIONS:
-            new=(current[0]+direction[0], current[1]+direction[1])
-            if new in minimums:
-                minimums.remove(new)
-                furnace.append(new)
-    return group
-
-def findGroups(minimums):
-    minimums=minimums[:]
-    groups=[]
-    while minimums:
-        group=findGroup(minimums, minimums[0])
-        groups.append(group)
-    return groups
 
 def volume(heightmap):
-    return 0
+    if not heightmap or not heightmap[0]:
+        return 0
 
-mapDict = convertToDict(raw)
-minimum = findMins(mapDict)
-minimums = collectMins(raw, minimum)
-groups = findGroups(minimums)
-print(groups)
+    rows, cols = len(heightmap), len(heightmap[0])
+    visited = [[False] * cols for _ in range(rows)]
+    min_heap = []
 
+    for r in range(rows):
+        for c in range(cols):
+            if r == 0 or r == rows - 1 or c == 0 or c == cols - 1:
+                heapq.heappush(min_heap, (heightmap[r][c], r, c))
+                visited[r][c] = True
 
+    water_volume = 0
+    while min_heap:
+        height, r, c = heapq.heappop(min_heap)
+
+        for dr, dc in DIRECTIONS:
+            nr, nc = r + dr, c + dc
+
+            if 0 <= nr < rows and 0 <= nc < cols and not visited[nr][nc]:
+                water_volume += max(0, height - heightmap[nr][nc])
+                heapq.heappush(
+                    min_heap, (max(height, heightmap[nr][nc]), nr, nc))
+                visited[nr][nc] = True
+
+    return water_volume
 
